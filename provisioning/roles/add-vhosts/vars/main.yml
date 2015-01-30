@@ -101,3 +101,18 @@ vhost_sites:
         opencolleges.local
       ]
     }
+  - {
+      host: 'magento.local',
+      user: 'vagrant',
+      group: 'vagrant',
+      admin_email: 'lukasz.tarasiewicz@poclode.net',
+      ssl: {
+        enabled: False,
+        ssl_certificate: '/path/to/ssl/cert',
+        ssl_certificate_key: '/path/to/ssl/private_key'
+      },
+      aliases: [
+        www.magento.local
+        magento.local
+      ]
+    }

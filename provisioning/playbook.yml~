@@ -1,10 +1,8 @@
 ---
 - hosts: all
-  vars_files:
-    - vars/main.yml
-  sudo: true
+  sudo: True
   remote_user: vagrant
   sudo_user: root
   roles:
+    - add-vhosts
     - phpmyadmin
-    - add-vhosts    

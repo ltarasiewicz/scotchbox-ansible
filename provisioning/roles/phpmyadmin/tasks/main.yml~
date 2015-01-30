@@ -1,0 +1,33 @@
+---
+- name: Ensure PHPMyAdmin is installed (RedHat).
+  yum: pkg=phpmyadmin state=installed enablerepo=epel
+  notify: restart apache
+  when: ansible_os_family == "RedHat"
+
+- name: Ensure PHPMyAdmin is installed (Debian).
+  apt: pkg=phpmyadmin state=installed
+  when: ansible_os_family == "Debian"
+
+- name: Ensure PHPMyAdmin config file is included in Apache config (Debian).
+  lineinfile: >
+    dest=/etc/apache2/apache2.conf
+    state=present
+    regexp="^Include.+phpmyadmin.+$"
+    line="Include /etc/phpmyadmin/apache.conf"
+    insertafter="EOF"
+  when: ansible_os_family == "Debian"
+
+- name: Add default username and password for MySQL connection.
+  lineinfile: >
+    dest=/etc/phpmyadmin/config.inc.php
+    state=present
+    regexp="^.+\['{{ item.key }}'\].+$"
+    line="$cfg['Servers'][$i]['{{ item.key }}'] = '{{ item.value }}';"
+    insertbefore="^\?>"
+  with_items:
+  - { key: host, value: "{{ phpmyadmin_mysql_host }}" }
+  - { key: port, value: "{{ phpmyadmin_mysql_port }}" }
+  - { key: socket, value: "{{ phpmyadmin_mysql_socket }}" }
+  - { key: connect_type, value: "{{ phpmyadmin_mysql_connect_type }}" }
+  - { key: user, value: "{{ phpmyadmin_mysql_user }}" }
+  - { key: password, value: "{{ phpmyadmin_mysql_password }}"}
